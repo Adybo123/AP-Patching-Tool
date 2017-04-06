@@ -2,7 +2,7 @@
 Module APPatcherMain
 
     'Declarations
-    Dim RepoURL As String = "http://www.adybo.co.uk/files/myfpacks/"
+    Dim RepoURL As String = "RepoURI"
     Dim CurrentDirectory As String = System.IO.Directory.GetCurrentDirectory
     Dim GameDirectory As String = ""
     Dim PrefLoadFail As Boolean = False
@@ -26,12 +26,12 @@ Module APPatcherMain
         Console.Clear()
         DrawLogo()
         Try
-            Dim SysRdr As New System.IO.StreamReader(CurrentDirectory & "\GameDirectory.txt")
+            Dim SysRdr As New System.IO.StreamReader(CurrentDirectory & "\InstallDirectory.txt")
             GameDirectory = SysRdr.ReadLine
             SysRdr.Close()
         Catch ex As Exception
             Console.WriteLine("Loading preferences failed!")
-            Console.WriteLine("Couldn't find this file: " & CurrentDirectory & "\GameDirectory.txt")
+            Console.WriteLine("Couldn't find this file: " & CurrentDirectory & "\InstallDirectory.txt")
             Console.WriteLine("")
             Console.WriteLine("The application can't start without this file.")
             Console.WriteLine("")

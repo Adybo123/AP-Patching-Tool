@@ -8,3 +8,4 @@ E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.vbproj.G
 E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.exe
 E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.xml
 E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.pdb
+E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\bin\Debug\Ionic.Zip.dll
