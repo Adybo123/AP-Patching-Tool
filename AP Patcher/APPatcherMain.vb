@@ -22,6 +22,11 @@ Module APPatcherMain
         Console.WriteLine("")
     End Sub
 
+    Sub LoadPreferencesFromArguments()
+        Dim LoadArguments As String() = Environment.GetCommandLineArgs()
+        CurrentDirectory = System.IO.Path.GetDirectoryName(LoadArguments(0))
+    End Sub
+
     Sub LoadGameDirectoryPreference()
         Console.Clear()
         DrawLogo()
@@ -35,7 +40,7 @@ Module APPatcherMain
             Console.WriteLine("")
             Console.WriteLine("The application can't start without this file.")
             Console.WriteLine("")
-            Console.Write("Press any key to quit.")
+            Console.Write("Press enter to quit.")
             PrefLoadFail = True
             Dim QuitResponse As String = Console.ReadLine
         End Try
@@ -45,6 +50,9 @@ Module APPatcherMain
         Console.Clear()
         DrawLogo()
         Console.WriteLine("Automatic patching tool for automated packages.")
+        Console.WriteLine("")
+        Console.WriteLine("Loaded with these commands:")
+        Console.WriteLine("Temp Directory - " & CurrentDirectory)
         Console.WriteLine("")
         Console.WriteLine("Please enter the desired Pack ID:")
         Console.Write(">")
