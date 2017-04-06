@@ -1,0 +1,10 @@
+E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\bin\Debug\AP Patcher.exe.config
+E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\bin\Debug\AP Patcher.exe
+E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\bin\Debug\AP Patcher.pdb
+E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\bin\Debug\AP Patcher.xml
+E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.vbprojResolveAssemblyReference.cache
+E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\obj\Debug\AP_Patcher.Resources.resources
+E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.vbproj.GenerateResource.Cache
+E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.exe
+E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.xml
+E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.pdb
