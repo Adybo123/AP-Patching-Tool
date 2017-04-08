@@ -4,11 +4,12 @@ Module APPatcherMain
     'Declarations
     Dim RepoURL As String = "RepoURI"
     Dim CurrentDirectory As String = System.IO.Directory.GetCurrentDirectory
-    Dim GameDirectory As String = ""
+    Dim InstallDirectory As String = ""
     Dim PrefLoadFail As Boolean = False
+    Dim ArgsPackID As String = ""
 
     Sub Main()
-        LoadGameDirectoryPreference()
+        LoadPreferencesFromArguments()
         If PrefLoadFail = False Then
             BackToMainMenu()
         End If
@@ -23,22 +24,53 @@ Module APPatcherMain
     End Sub
 
     Sub LoadPreferencesFromArguments()
+        Console.Clear()
+        DrawLogo()
+
+        'TODO: Check if paths are valid
         Dim LoadArguments As String() = Environment.GetCommandLineArgs()
+        Console.WriteLine("Retrieving command line arguments... OK!")
         CurrentDirectory = System.IO.Path.GetDirectoryName(LoadArguments(0))
+        Console.WriteLine("Loading current directory... OK!")
+        Dim LoadFallbacks As Boolean = False
+        Try
+            Console.WriteLine("Loading install directory...")
+            InstallDirectory = LoadArguments(1)
+            Console.WriteLine("Argument provided")
+            If InstallDirectory = "default" Then
+                'Use default folder
+                LoadFallbacks = True
+                Console.WriteLine("Provided argument 'default', loading fallback.")
+            End If
+        Catch ex As Exception
+            'No directory specified
+            LoadFallbacks = True
+            Console.WriteLine("No argument provided, loading fallback.")
+        End Try
+        If LoadFallbacks = True Then
+            LoadInstallDirectoryPreference()
+        End If
+        Try
+            'If this succeeds, the user's automating the pack
+            ArgsPackID = LoadArguments(2)
+        Catch ex As Exception
+            'The user wants to enter the pack manually
+        End Try
     End Sub
 
-    Sub LoadGameDirectoryPreference()
+    Sub LoadInstallDirectoryPreference()
         Console.Clear()
         DrawLogo()
         Try
             Dim SysRdr As New System.IO.StreamReader(CurrentDirectory & "\InstallDirectory.txt")
-            GameDirectory = SysRdr.ReadLine
+            InstallDirectory = SysRdr.ReadLine
             SysRdr.Close()
         Catch ex As Exception
             Console.WriteLine("Loading preferences failed!")
             Console.WriteLine("Couldn't find this file: " & CurrentDirectory & "\InstallDirectory.txt")
             Console.WriteLine("")
-            Console.WriteLine("The application can't start without this file.")
+            Console.WriteLine("Starting the application requires an install directory from command line arguments or a file.")
+            'TODO: Ask if they want to learn how to use command line args
             Console.WriteLine("")
             Console.Write("Press enter to quit.")
             PrefLoadFail = True
@@ -53,6 +85,7 @@ Module APPatcherMain
         Console.WriteLine("")
         Console.WriteLine("Loaded with these commands:")
         Console.WriteLine("Temp Directory - " & CurrentDirectory)
+        Console.WriteLine("Install Directory - " & InstallDirectory)
         Console.WriteLine("")
         Console.WriteLine("Please enter the desired Pack ID:")
         Console.Write(">")
@@ -81,7 +114,7 @@ Module APPatcherMain
         Console.WriteLine("Attempting to extract compressed pack...")
         Try
             Dim ZipToUnpack As String = LocalPackPath
-            Dim UnpackDirectory As String = GameDirectory & "\"
+            Dim UnpackDirectory As String = InstallDirectory & "\"
             Using zip1 As ZipFile = ZipFile.Read(ZipToUnpack)
                 Dim e As ZipEntry
                 Dim TotalItems As Integer = 0

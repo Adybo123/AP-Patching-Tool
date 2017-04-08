@@ -9,3 +9,13 @@ E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.exe
 E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.xml
 E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.pdb
 E:\Projects\AP Patcher\AP-Patching-Tool\AP Patcher\bin\Debug\Ionic.Zip.dll
+D:\AP-Patching-Tool\AP Patcher\bin\Debug\AP Patcher.exe.config
+D:\AP-Patching-Tool\AP Patcher\bin\Debug\AP Patcher.exe
+D:\AP-Patching-Tool\AP Patcher\bin\Debug\AP Patcher.pdb
+D:\AP-Patching-Tool\AP Patcher\bin\Debug\AP Patcher.xml
+D:\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.vbprojResolveAssemblyReference.cache
+D:\AP-Patching-Tool\AP Patcher\obj\Debug\AP_Patcher.Resources.resources
+D:\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.vbproj.GenerateResource.Cache
+D:\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.exe
+D:\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.xml
+D:\AP-Patching-Tool\AP Patcher\obj\Debug\AP Patcher.pdb

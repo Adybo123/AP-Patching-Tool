@@ -1,0 +1,5 @@
+C:\Example
+
+Anything under the first line of this file is a comment.
+Use InstallDirectory.txt to point the application to a default install directory if one is not specified.
+Paths are written as above. Ensure the path does not end with '\'.
