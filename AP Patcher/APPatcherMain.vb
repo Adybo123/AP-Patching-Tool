@@ -7,6 +7,7 @@ Module APPatcherMain
     Dim InstallDirectory As String = ""
     Dim PrefLoadFail As Boolean = False
     Dim ArgsPackID As String = ""
+    Dim QuitOnInstallPack As Boolean = False
 
     Sub Main()
         LoadPreferencesFromArguments()
@@ -32,10 +33,12 @@ Module APPatcherMain
         Console.WriteLine("Retrieving command line arguments... OK!")
         CurrentDirectory = System.IO.Path.GetDirectoryName(LoadArguments(0))
         Console.WriteLine("Loading current directory... OK!")
+        'Load repo
+        RepoURL = LoadArguments(1)
         Dim LoadFallbacks As Boolean = False
         Try
             Console.WriteLine("Loading install directory...")
-            InstallDirectory = LoadArguments(1)
+            InstallDirectory = LoadArguments(2)
             Console.WriteLine("Argument provided")
             If InstallDirectory = "default" Then
                 'Use default folder
@@ -52,7 +55,7 @@ Module APPatcherMain
         End If
         Try
             'If this succeeds, the user's automating the pack
-            ArgsPackID = LoadArguments(2)
+            ArgsPackID = LoadArguments(3)
         Catch ex As Exception
             'The user wants to enter the pack manually
         End Try
@@ -87,9 +90,16 @@ Module APPatcherMain
         Console.WriteLine("Temp Directory - " & CurrentDirectory)
         Console.WriteLine("Install Directory - " & InstallDirectory)
         Console.WriteLine("")
-        Console.WriteLine("Please enter the desired Pack ID:")
-        Console.Write(">")
-        Dim PackIdToFetch As String = Console.ReadLine
+        Dim PackIdToFetch As String
+        If ArgsPackID = "" Then
+            Console.WriteLine("Please enter the desired Pack ID:")
+            Console.Write(">")
+            PackIdToFetch = Console.ReadLine
+        Else
+            Console.WriteLine("Automatically downloading pack - " & ArgsPackID)
+            PackIdToFetch = ArgsPackID
+            QuitOnInstallPack = True
+        End If
         PatchFromID(PackIdToFetch)
     End Sub
 
@@ -130,12 +140,15 @@ Module APPatcherMain
                 Next
             End Using
             Console.WriteLine("")
-            Console.WriteLine("Pack extracted, game patched.")
+            Console.WriteLine("Pack extracted.")
         Catch ex As Exception
             Console.WriteLine("")
             Console.WriteLine("Failed to extract the patch! The Pack ID may have been invalid or the repo might not be responding properly.")
         End Try
         Console.WriteLine("")
+        If QuitOnInstallPack = True Then
+            Exit Sub
+        End If
         Console.WriteLine("Type 'quit' to close the application, type 'menu' to return to the menu.")
         Console.Write(">")
         Dim OptionResponse As String = Console.ReadLine
