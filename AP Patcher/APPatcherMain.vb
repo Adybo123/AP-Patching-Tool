@@ -8,6 +8,8 @@ Module APPatcherMain
     Dim PrefLoadFail As Boolean = False
     Dim ArgsPackID As String = ""
     Dim QuitOnInstallPack As Boolean = False
+    Dim RunAsSilent As Boolean = False
+    Dim ShowDownloadUI As Boolean = True
 
     Sub Main()
         LoadPreferencesFromArguments()
@@ -16,39 +18,63 @@ Module APPatcherMain
         End If
     End Sub
 
+    Sub WriteToConsole(ConsoleWriteLn As String)
+        If RunAsSilent = False Then
+            Console.WriteLine(ConsoleWriteLn)
+        End If
+    End Sub
+
     Sub DrawLogo()
-        Console.WriteLine("=======================")
-        Console.WriteLine("AP Patcher package tool")
-        Console.WriteLine("Created by Adam Soutar")
-        Console.WriteLine("=======================")
-        Console.WriteLine("")
+        WriteToConsole("=======================")
+        WriteToConsole("AP Patcher package tool")
+        WriteToConsole("Created by Adam Soutar")
+        WriteToConsole("=======================")
+        WriteToConsole("")
     End Sub
 
     Sub LoadPreferencesFromArguments()
         Console.Clear()
+        Dim LoadArguments As String() = Environment.GetCommandLineArgs()
+        Try
+            'Check for silent command BEFORE we draw graphics
+            Dim SilentCommand As String = LoadArguments(4)
+            If SilentCommand = "silent" Then
+                RunAsSilent = True
+                ShowDownloadUI = False
+            End If
+        Catch ex As Exception
+            'No "silent" command
+        End Try
         DrawLogo()
 
         'TODO: Check if paths are valid
-        Dim LoadArguments As String() = Environment.GetCommandLineArgs()
-        Console.WriteLine("Retrieving command line arguments... OK!")
+        WriteToConsole("Retrieving command line arguments... OK!")
         CurrentDirectory = System.IO.Path.GetDirectoryName(LoadArguments(0))
-        Console.WriteLine("Loading current directory... OK!")
-        'Load repo
-        RepoURL = LoadArguments(1)
+        WriteToConsole("Loading current directory... OK!")
+        Try
+            'Load repo
+            RepoURL = LoadArguments(1)
+            WriteToConsole("Loading repo URI... OK!")
+            If RepoURL = "default" Then
+                WriteToConsole("Repo specified was 'default', load fallbacks.")
+                LoadRepoPreference()
+            End If
+        Catch ex As Exception
+            LoadRepoPreference()
+        End Try
         Dim LoadFallbacks As Boolean = False
         Try
-            Console.WriteLine("Loading install directory...")
             InstallDirectory = LoadArguments(2)
-            Console.WriteLine("Argument provided")
+            WriteToConsole("Loading install directory... OK!")
             If InstallDirectory = "default" Then
                 'Use default folder
                 LoadFallbacks = True
-                Console.WriteLine("Provided argument 'default', loading fallback.")
+                WriteToConsole("Provided argument 'default', loading fallback.")
             End If
         Catch ex As Exception
             'No directory specified
             LoadFallbacks = True
-            Console.WriteLine("No argument provided, loading fallback.")
+            WriteToConsole("No argument provided, loading fallback.")
         End Try
         If LoadFallbacks = True Then
             LoadInstallDirectoryPreference()
@@ -61,6 +87,26 @@ Module APPatcherMain
         End Try
     End Sub
 
+    Sub LoadRepoPreference()
+        Console.Clear()
+        DrawLogo()
+        Try
+            Dim SysRdr As New System.IO.StreamReader(CurrentDirectory & "\MainRepo.txt")
+            RepoURL = SysRdr.ReadLine
+            SysRdr.Close()
+        Catch ex As Exception
+            WriteToConsole("Loading preferences failed!")
+            WriteToConsole("Couldn't find this file: " & CurrentDirectory & "\MainRepo.txt")
+            WriteToConsole("")
+            WriteToConsole("Starting the application requires a Repo URL from command line arguments or a file.")
+            'TODO: Ask if they want to learn how to use command line args
+            WriteToConsole("")
+            WriteToConsole("Press enter to quit.")
+            PrefLoadFail = True
+            Dim QuitResponse As String = Console.ReadLine
+        End Try
+    End Sub
+
     Sub LoadInstallDirectoryPreference()
         Console.Clear()
         DrawLogo()
@@ -69,13 +115,13 @@ Module APPatcherMain
             InstallDirectory = SysRdr.ReadLine
             SysRdr.Close()
         Catch ex As Exception
-            Console.WriteLine("Loading preferences failed!")
-            Console.WriteLine("Couldn't find this file: " & CurrentDirectory & "\InstallDirectory.txt")
-            Console.WriteLine("")
-            Console.WriteLine("Starting the application requires an install directory from command line arguments or a file.")
+            WriteToConsole("Loading preferences failed!")
+            WriteToConsole("Couldn't find this file: " & CurrentDirectory & "\InstallDirectory.txt")
+            WriteToConsole("")
+            WriteToConsole("Starting the application requires an install directory from command line arguments or a file.")
             'TODO: Ask if they want to learn how to use command line args
-            Console.WriteLine("")
-            Console.Write("Press enter to quit.")
+            WriteToConsole("")
+            WriteToConsole("Press enter to quit.")
             PrefLoadFail = True
             Dim QuitResponse As String = Console.ReadLine
         End Try
@@ -84,19 +130,20 @@ Module APPatcherMain
     Sub BackToMainMenu()
         Console.Clear()
         DrawLogo()
-        Console.WriteLine("Automatic patching tool for automated packages.")
-        Console.WriteLine("")
-        Console.WriteLine("Loaded with these commands:")
-        Console.WriteLine("Temp Directory - " & CurrentDirectory)
-        Console.WriteLine("Install Directory - " & InstallDirectory)
-        Console.WriteLine("")
+        WriteToConsole("Automatic patching tool for automated packages.")
+        WriteToConsole("")
+        WriteToConsole("Loaded with these commands:")
+        WriteToConsole("Temp Directory - " & CurrentDirectory)
+        WriteToConsole("Install Directory - " & InstallDirectory)
+        WriteToConsole("Repo - " & RepoURL)
+        WriteToConsole("")
         Dim PackIdToFetch As String
         If ArgsPackID = "" Then
-            Console.WriteLine("Please enter the desired Pack ID:")
+            WriteToConsole("Please enter the desired Pack ID:")
             Console.Write(">")
             PackIdToFetch = Console.ReadLine
         Else
-            Console.WriteLine("Automatically downloading pack - " & ArgsPackID)
+            WriteToConsole("Automatically downloading pack - " & ArgsPackID)
             PackIdToFetch = ArgsPackID
             QuitOnInstallPack = True
         End If
@@ -104,24 +151,24 @@ Module APPatcherMain
     End Sub
 
     Sub PatchFromID(PackID)
-        Console.WriteLine("")
-        Console.WriteLine("Fetching pack " & PackID & "...")
+        WriteToConsole("")
+        WriteToConsole("Fetching pack " & PackID & "...")
 
         'Attempt pack download
         Dim LocalPackPath As String = System.IO.Directory.GetCurrentDirectory & "\" & PackID & ".zip"
         Try
             My.Computer.Clipboard.SetText(RepoURL & PackID & ".zip")
-            My.Computer.Network.DownloadFile(RepoURL & PackID & ".zip", LocalPackPath, "", "", True, 10000, True)
-            Console.WriteLine("Asking repo for response... OK!")
-            Console.WriteLine("Checking pack exists... OK!")
-            Console.WriteLine("Patch downloaded successfully.")
+            My.Computer.Network.DownloadFile(RepoURL & PackID & ".zip", LocalPackPath, "", "", ShowDownloadUI, 10000, True)
+            WriteToConsole("Asking repo for response... OK!")
+            WriteToConsole("Checking pack exists... OK!")
+            WriteToConsole("Patch downloaded successfully.")
         Catch ex As Exception
-            Console.WriteLine("Asking repo for response... FAIL!")
-            Console.WriteLine("Pack ID might be incorrect, repo URI may be invalid or not responding correctly.")
+            WriteToConsole("Asking repo for response... FAIL!")
+            WriteToConsole("Pack ID might be incorrect, repo URI may be invalid or not responding correctly.")
         End Try
 
         'Attempt zip file extraction
-        Console.WriteLine("Attempting to extract compressed pack...")
+        WriteToConsole("Attempting to extract compressed pack...")
         Try
             Dim ZipToUnpack As String = LocalPackPath
             Dim UnpackDirectory As String = InstallDirectory & "\"
@@ -131,25 +178,25 @@ Module APPatcherMain
                 For Each x In zip1
                     TotalItems = TotalItems + 1
                 Next
-                Console.WriteLine("File scan complete. Compressed file contains " & TotalItems & " textures.")
+                WriteToConsole("File scan complete. Compressed file contains " & TotalItems & " textures.")
                 Dim CurrentItem As Integer = 1
                 For Each e In zip1
-                    Console.WriteLine("Extracting item " & CurrentItem & " of " & TotalItems)
+                    WriteToConsole("Extracting item " & CurrentItem & " of " & TotalItems)
                     e.Extract(UnpackDirectory, ExtractExistingFileAction.OverwriteSilently)
                     CurrentItem = CurrentItem + 1
                 Next
             End Using
-            Console.WriteLine("")
-            Console.WriteLine("Pack extracted.")
+            WriteToConsole("")
+            WriteToConsole("Pack extracted.")
         Catch ex As Exception
-            Console.WriteLine("")
-            Console.WriteLine("Failed to extract the patch! The Pack ID may have been invalid or the repo might not be responding properly.")
+            WriteToConsole("")
+            WriteToConsole("Failed to extract the patch! The Pack ID may have been invalid or the repo might not be responding properly.")
         End Try
-        Console.WriteLine("")
+        WriteToConsole("")
         If QuitOnInstallPack = True Then
             Exit Sub
         End If
-        Console.WriteLine("Type 'quit' to close the application, type 'menu' to return to the menu.")
+        WriteToConsole("Type 'quit' to close the application, type 'menu' to return to the menu.")
         Console.Write(">")
         Dim OptionResponse As String = Console.ReadLine
         If OptionResponse.ToLower() = "quit" Then

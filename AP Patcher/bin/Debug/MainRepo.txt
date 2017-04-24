@@ -1,0 +1,5 @@
+http://www.(RepoAddressHere).com/
+
+Anything below this line is a comment.
+For a repo, use any HTTP directory with .zip files in.
+Subdirectories are supported.
